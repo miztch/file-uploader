@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <title>Simple File Uploader</title>
+    {% block head %}{% endblock %}
+</head>
+
+<body>
+    <nav class="navbar navbar-light p-3" style="background-color: #95edba">
+        <a class="navbar-brand pl-3" href="/" style="font-size: 2rem;">📁 File Uploader</a>
+    </nav>
+
+    {% for category, message in get_flashed_messages(with_categories=True) %}
+        <div class="alert alert-{{category}} m-5">{{ message }}</div>
+    {% endfor %}
+
+    {% block body %}{% endblock %}
+</body>
+
+</html>
