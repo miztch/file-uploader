@@ -5,7 +5,7 @@
 {% block body %}
 <div class="container">
   <div class="col text-center">
-    <a class="btn btn-primary btn-lg m-5" href="/add" role="button">📄 UPLOAD NEW FILE</a>
+    <a class="btn btn-success btn-lg m-5" href="/add" role="button">📄 UPLOAD NEW FILE</a>
     <table class="table">
       <thead>
         <tr>
@@ -21,10 +21,10 @@
       <tbody>
         {% for file in files %}
         <tr>
-          <th scope="row"><a class="btn btn-link btn-sm" href="/detail/{{ file.file_id }}" role="button">Detail</a></th>
-          <td>{{ file.s3_key }}</td>
-          <td>{{ file.description }}</td>
-          <td>{{ file.timestamp }}</td>
+          <th scope="row"><a class="btn btn-success btn-sm" href="/files/{{ file.file_id }}" role="button">Detail</a></th>
+          <td class="align-middle">{{ file.s3_key }}</td>
+          <td class="align-middle">{{ file.description }}</td>
+          <td class="align-middle">{{ file.timestamp }}</td>
         </tr>
         {% endfor %}
       </tbody>
