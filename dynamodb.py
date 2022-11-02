@@ -20,6 +20,14 @@ def get_all(table_name):
     return result
 
 
+def get(table_name, file_id):
+    Table = init(table_name)
+
+    result = Table.get_item(Key={'file_id': file_id})
+
+    return result
+
+
 def put(table_name, item):
     Table = init(table_name)
     result = Table.put_item(Item=item)

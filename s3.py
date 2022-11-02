@@ -21,6 +21,17 @@ def put_object(bucket_name, upload_data, object_key):
     return result
 
 
+def get_object(bucket_name, object_key):
+    s3 = boto3.client('s3')
+
+    result = s3.get_object(
+        Bucket=bucket_name,
+        Key=object_key
+    )
+
+    return result
+
+
 def generate_presigned_url(bucket_name, object_key):
     s3 = boto3.client('s3')
 

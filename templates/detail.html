@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<h2 class="m-5" style="text-align: center;">Preview</h2>
+<div class="card w-50 mb-3" style="margin: auto;">
+    <div class="card-body">
+        <h3 class="card-title">
+            {{ file.s3_key }}
+        </h3>
+        <div class="pb-2">
+            Upload Date: {{ file.timestamp }}
+        </div>
+        <div class="image-preview" style="text-align:center">
+            <img width=90% height=auto src={{ file.presigned_url }}>
+        </div>
+        <div class="pt-2 text-right">
+            <a class="btn btn-outline-success" href="/" role="button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-return-left" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M14.5 1.5a.5.5 0 0 1 .5.5v4.8a2.5 2.5 0 0 1-2.5 2.5H2.707l3.347 3.346a.5.5 0 0 1-.708.708l-4.2-4.2a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 8.3H12.5A1.5 1.5 0 0 0 14 6.8V2a.5.5 0 0 1 .5-.5z"/>
+                </svg> Back to Top
+            </a>
+            <a class="btn btn-success" href={{ file.presigned_url}} role="button" download>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
+                    <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                    <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+                </svg> Download
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -89,6 +89,30 @@ def add():
     print(request.method)
     return render_template('add.html')
 
+
+@app.route('/files/<string:file_id>')
+def detail(file_id):
+    record = dynamodb.get(app.config['DYNAMODB_TABLE'], file_id)
+
+    s3_key = record['Item']['s3_key']
+    timestamp = record['Item']['timestamp']
+
+    s3_object = s3.get_object(
+        app.config['S3_BUCKET'], s3_key)
+
+    presigned_url = s3.generate_presigned_url(
+        app.config['S3_BUCKET'], s3_key)
+
+    file = {
+        'file_id': file_id,
+        's3_key': s3_key,
+        'timestamp': timestamp,
+        'presigned_url': presigned_url
+    }
+
+    return render_template('detail.html', file=file)
+
+
 # --- below are paths for debug ---
 
 
