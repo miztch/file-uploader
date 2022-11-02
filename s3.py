@@ -38,8 +38,7 @@ def generate_presigned_url(bucket_name, object_key):
     presigned_url = s3.generate_presigned_url(
         ClientMethod='get_object',
         Params={'Bucket': bucket_name, 'Key': object_key},
-        ExpiresIn=3600,
-        HTTPMethod='GET'
+        ExpiresIn=3600
     )
 
     return presigned_url
