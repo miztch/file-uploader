@@ -1,5 +1,6 @@
 import boto3
 
+
 def init(table_name):
     dynamodb = boto3.resource('dynamodb')
     Table = dynamodb.Table(table_name)
@@ -10,6 +11,7 @@ def scan(table_name):
     Table = init(table_name)
 
     return Table.scan()
+
 
 def get_all(table_name):
     Table = init(table_name)
