@@ -1,18 +1,23 @@
 {% extends 'base.html' %}
 
-{% block head %}{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="/static/css/tablesorter.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.3/js/jquery.tablesorter.min.js" integrity="sha512-qzgd5cYSZcosqpzpn7zF2ZId8f/8CHmFKZ8j7mU4OUXTNRd5g+ZHBPsgKEwoqxCtdQvExE5LprwwPAgoicguNg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="/static/js/tablesorter.js"></script>
+{% endblock %}
 
 {% block body %}
 <div class="container">
   <div class="col text-center">
     <a class="btn btn-success btn-lg m-5" href="/add" role="button">📄 UPLOAD NEW FILE</a>
-    <table class="table">
+    <table class="table sort-table">
       <thead>
         <tr>
-          <th scope="col">Detail</th>
-          <th scope="col">Filename</th>
-          <th scope="col">description</th>
-          <th scope="col">Date Uploaded</th>
+          <th class="text-center" scope="col" data-sorter="false">Detail</th>
+          <th class="text-center" scope="col" data-sorter="false">Filename</th>
+          <th class="text-center" scope="col" data-sorter="false">description</th>
+          <th class="text-center" scope="col" data-sort-initial-order="desc">Date Uploaded</th>
         </tr>
       </thead>
       {% if no_records %}
@@ -21,7 +26,7 @@
       <tbody>
         {% for file in files %}
         <tr>
-          <th scope="row"><a class="btn btn-success btn-sm" href="/files/{{ file.file_id }}" role="button">Detail</a></th>
+          <td><a class="btn btn-success btn-sm" href="/files/{{ file.file_id }}" role="button">Detail</a></th>
           <td class="align-middle">{{ file.s3_key }}</td>
           <td class="align-middle">{{ file.description }}</td>
           <td class="align-middle">{{ file.timestamp }}</td>
