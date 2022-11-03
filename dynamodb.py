@@ -17,7 +17,8 @@ def get_all(table_name):
     Table = init(table_name)
 
     response = Table.scan()
-    result = response['Items']
+    result = sorted(response['Items'],
+                    key=lambda x: x['timestamp'], reverse=True)
 
     return result
 
