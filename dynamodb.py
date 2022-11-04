@@ -1,20 +1,10 @@
 import boto3
 
-
-def init(table_name):
-    dynamodb = boto3.resource('dynamodb')
-    Table = dynamodb.Table(table_name)
-    return Table
-
-
-def scan(table_name):
-    Table = init(table_name)
-
-    return Table.scan()
+dynamodb = boto3.resource('dynamodb')
 
 
 def get_all(table_name):
-    Table = init(table_name)
+    Table = dynamodb.Table(table_name)
 
     response = Table.scan()
     result = sorted(response['Items'],
@@ -24,7 +14,7 @@ def get_all(table_name):
 
 
 def get(table_name, file_id):
-    Table = init(table_name)
+    Table = dynamodb.Table(table_name)
 
     result = Table.get_item(Key={'file_id': file_id})
 
@@ -32,7 +22,8 @@ def get(table_name, file_id):
 
 
 def put(table_name, item):
-    Table = init(table_name)
+    Table = dynamodb.Table(table_name)
+
     result = Table.put_item(Item=item)
 
     return result
