@@ -113,23 +113,5 @@ def detail(file_id):
     return render_template('detail.html', file=file)
 
 
-# --- below are paths for debug ---
-
-
-@app.route('/scan')
-def scan():
-    return jsonify(dynamodb.scan(app.config['DYNAMODB_TABLE']))
-
-
-@app.route('/get-all')
-def get_all():
-    return jsonify(dynamodb.get_all(app.config['DYNAMODB_TABLE']))
-
-
-@app.route('/list-obj')
-def list_obj():
-    return jsonify(s3.list_object(app.config['S3_BUCKET']))
-
-
 if __name__ == "__main__":
     app.run()
