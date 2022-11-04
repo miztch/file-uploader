@@ -1,12 +1,11 @@
 import random
 import string
 
-ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
-
 
 def allowed_file(filename):
+    allowed_extensions = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
     return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+           filename.rsplit('.', 1)[1].lower() in allowed_extensions
 
 
 def generate_random_filename():
