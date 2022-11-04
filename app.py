@@ -21,11 +21,14 @@ app.secret_key = secret
 
 app.config.from_pyfile('./config.cfg')
 
+bucket = app.config['S3_BUCKET']
+table = app.config['DYNAMODB_TABLE']
+
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'GET':
-        files = dynamodb.get_all(app.config['DYNAMODB_TABLE'])
+        files = dynamodb.get_all(table)
         no_records = False if files else True
         return render_template('index.html', files=files, no_records=no_records)
     else:
@@ -44,7 +47,7 @@ def index():
 
             # S3へアップロードする
             result = s3.put_object(
-                app.config['S3_BUCKET'],
+                bucket,
                 upload_data,
                 s3_key
             )
@@ -57,7 +60,7 @@ def index():
                 's3_key': s3_key
             }
 
-            dynamodb.put(app.config['DYNAMODB_TABLE'], item)
+            dynamodb.put(table, item)
 
             flash('File uploaded', 'success')
             return redirect('/')
@@ -76,16 +79,12 @@ def add():
 
 @app.route('/files/<string:file_id>')
 def detail(file_id):
-    record = dynamodb.get(app.config['DYNAMODB_TABLE'], file_id)
+    record = dynamodb.get(table, file_id)
 
     s3_key = record['Item']['s3_key']
     timestamp = record['Item']['timestamp']
-
-    s3_object = s3.get_object(
-        app.config['S3_BUCKET'], s3_key)
-
-    presigned_url = s3.generate_presigned_url(
-        app.config['S3_BUCKET'], s3_key)
+    s3_object = s3.get_object(bucket, s3_key)
+    presigned_url = s3.generate_presigned_url(bucket, s3_key)
 
     file = {
         'file_id': file_id,
