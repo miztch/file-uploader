@@ -33,55 +33,39 @@ def index():
         description = request.form.get('description')
         uploaded_file = request.files['file']
 
-        # 説明が記載されていない場合にエラーを返す
-        if description == '':
-            flash('Enter description for upload file.', 'danger')
+        valid, error_message = util.validate_input(description, uploaded_file)
+
+        if valid:
+            # S3へアップロードする際のファイル名を生成する
+            extension = uploaded_file.filename.rsplit('.', 1)[1].lower()
+            file_id = util.generate_random_filename()
+            s3_key = file_id + '.' + extension
+            upload_data = io.BufferedReader(uploaded_file).read()
+
+            # S3へアップロードする
+            result = s3.put_object(
+                app.config['S3_BUCKET'],
+                upload_data,
+                s3_key
+            )
+
+            # DynamoDBへレコードを追加する
+            item = {
+                'file_id': file_id,
+                'description': description,
+                'timestamp': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+                's3_key': s3_key
+            }
+
+            dynamodb.put(app.config['DYNAMODB_TABLE'], item)
+
+            flash('File uploaded', 'success')
+            return redirect('/')
+
+        # バリデーションエラーの場合にエラーを返す
+        else:
+            flash(error_message, 'danger')
             return redirect('/add')
-
-        # リクエストボディにファイルが存在しない場合にエラーを返す
-        if 'file' not in request.files:
-            flash('no file part', 'danger')
-            return redirect('/add')
-
-        # ファイル名が指定されていない場合にエラーを返す
-        if uploaded_file.filename == '':
-            flash('no files selected', 'danger')
-            return redirect('/add')
-
-        # 入力フォームのチェック後、ファイルそのものの処理
-        if uploaded_file:
-            # 許可された拡張子のファイルかチェックする
-            # OKなら、S3へアップロードする際のファイル名を生成する
-            if util.allowed_file(uploaded_file.filename):
-                extension = uploaded_file.filename.rsplit('.', 1)[1].lower()
-                file_id = util.generate_random_filename()
-                s3_key = file_id + '.' + extension
-                upload_data = io.BufferedReader(uploaded_file).read()
-
-                # S3へアップロードする
-                result = s3.put_object(
-                    app.config['S3_BUCKET'],
-                    upload_data,
-                    s3_key
-                )
-
-                # DynamoDBへレコードを追加する
-                item = {
-                    'file_id': file_id,
-                    'description': description,
-                    'timestamp': datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-                    's3_key': s3_key
-                }
-
-                dynamodb.put(app.config['DYNAMODB_TABLE'], item)
-
-                flash('File uploaded', 'success')
-                return redirect('/')
-
-            # 許可されていない拡張子の場合にエラーを返す
-            else:
-                flash('File extention is not allowed.', 'danger')
-                return redirect('/add')
 
 
 @app.route('/add')
