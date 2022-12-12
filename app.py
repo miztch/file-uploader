@@ -9,12 +9,12 @@ import util
 
 logger = getLogger(__name__)
 
-app = Flask(__name__)
+app = Flask(__name__, instance_relative_config=True)
 
 secret = secrets.token_urlsafe(32)
 app.secret_key = secret
 
-app.config.from_pyfile('./config.cfg')
+app.config.from_pyfile('config.cfg')
 
 bucket = app.config['S3_BUCKET']
 table = app.config['DYNAMODB_TABLE']
