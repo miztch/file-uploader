@@ -1,7 +1,9 @@
+import os
 import secrets
-
-from flask import Flask, flash, render_template, request, redirect, url_for, make_response, jsonify
 from logging import getLogger
+
+from flask import (Flask, flash, jsonify, make_response, redirect,
+                   render_template, request, url_for)
 from werkzeug.utils import secure_filename
 
 import fileio
@@ -16,8 +18,8 @@ app.secret_key = secret
 
 app.config.from_pyfile('config.cfg')
 
-bucket = app.config['S3_BUCKET']
-table = app.config['DYNAMODB_TABLE']
+bucket = os.envrion['S3_BUCKET']
+table = os.environ['DYNAMODB_TABLE']
 
 
 @app.route('/', methods=['GET', 'POST'])
