@@ -16,7 +16,7 @@ app = Flask(__name__, instance_relative_config=True)
 secret = secrets.token_urlsafe(32)
 app.secret_key = secret
 
-app.config.from_pyfile('config.cfg')
+app.config.from_object('config')
 
 bucket = os.envrion['S3_BUCKET']
 table = os.environ['DYNAMODB_TABLE']
