@@ -7,7 +7,12 @@ Simple file uploader made with Flask
 
 ## docker-compose
 You can use `docker-compose.yml` to deploy.
-- set environment variables in advance.
+- Prepare AWS resources in advance. They should be in the same region.
+  - S3 bucket: to store uploaded files.
+  - DynamoDB Table: to store information for files.
+    - Partition Key: `file_id` (String)
+
+- Set environment variables in `docker-compose.yml` .
   ```yml
     environment:
       - AWS_REGION=us-east-1
