@@ -1,0 +1,21 @@
+version: 1
+task_definition:
+  ecs_network_mode: bridge
+  task_role_arn: <ECS_TASK_ROLE_ARN>
+  task_execution_role: <ECS_TASK_EXECUTION_ROLE_NAME>
+  task_size:
+    mem_limit: 512
+    cpu_limit: 256
+  services:
+    app:
+      essential: true
+    web:
+      essential: true
+run_params:
+  network_configuration:
+    awsvpc_configuration:
+      subnets:
+        - <SUBNET_ID>
+      security_groups:
+        - <EC2_INSTANCE_SECURITY_GROUP_ID>
+      assign_public_ip: ENABLED

@@ -1,0 +1,107 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: ECS/Fargate
+
+Parameters:
+  ClusterName:
+    Type: String
+  VpcId:
+    Type: String
+  ServiceSubnets:
+    Type: List<AWS::EC2::Subnet::Id>
+  InboundIpAddress:
+    Description: Global IP Address you access to the application.
+    Type: String
+    Default: 0.0.0.0/0
+    AllowedPattern: (\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})
+    ConstraintDescription: must be a valid IP CIDR range of the form x.x.x.x/x.
+
+Resources:
+  #---------------------------------
+  # ECS Role
+  #---------------------------------
+  ECSTaskExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${ClusterName}-ECSTaskExecutionRole"
+      Path: /
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+
+  ECSTaskRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${ClusterName}-ECSTaskRole"
+      Path: /
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonS3FullAccess
+        - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+
+  #---------------------------------
+  # ECS Cluster
+  #---------------------------------
+  ECSCluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: !Ref ClusterName
+      CapacityProviders:
+        - FARGATE
+        - FARGATE_SPOT
+      DefaultCapacityProviderStrategy:
+        - CapacityProvider: FARGATE
+          Base: 1
+          Weight: 1
+        - CapacityProvider: FARGATE_SPOT
+          Weight: 2
+      ClusterSettings:
+        - Name: containerInsights
+          Value: enabled
+
+  #---------------------------------
+  # SecurityGroup for Fargate Task
+  #---------------------------------
+  ECSSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub "${ClusterName}-ecs-sg"
+      GroupDescription: !Sub "${ClusterName}-ecs-sg"
+      VpcId: !Ref "VpcId"
+      Tags:
+        - Key: Name
+          Value: !Sub "${ClusterName}-ecs-sg"
+  SecurityGroupIngress80:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !GetAtt "ECSSecurityGroup.GroupId"
+      IpProtocol: "tcp"
+      FromPort: 80
+      ToPort: 80
+      CidrIp: !Ref InboundIpAddress
+  SecurityGroupEgress01:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+      GroupId: !GetAtt "ECSSecurityGroup.GroupId"
+      IpProtocol: "-1"
+      CidrIp: 0.0.0.0/0
+
+Outputs:
+  ECSTaskExecutionRoleName:
+    Value: !Ref ECSTaskExecutionRole
+  ECSTaskRoleArn:
+    Value: !GetAtt ECSTaskRole.Arn
+  ECSSecurityGroupId:
+    Value: !GetAtt ECSSecurityGroup.GroupId
