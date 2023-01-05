@@ -15,7 +15,7 @@ You can use `docker-compose.yml` to deploy.
 - Set environment variables in `docker-compose.yml` .
   ```yml
     environment:
-      - AWS_REGION=us-east-1
+        - AWS_REGION=<AWS_REGION>
       - S3_BUCKET=<YOUR AMAZON S3 BUCKET>
       - DYNAMODB_TABLE=<YOUR AMAZON DYNAMODB TABLE>
   ```
